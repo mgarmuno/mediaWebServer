@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/mgarmuno/mediaWebServer/server/data"
 )
 
 func main() {
@@ -17,5 +19,5 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func initialChecks() {
-
+	data.OpenConnection()
 }
