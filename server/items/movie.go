@@ -1,15 +1,15 @@
 package items
 
 type Movie struct {
-	id       int
-	title    string
-	year     string
-	time     int
-	date     int
-	country  string
-	sinopsis string
-	director []string
-	writers  []string
-	stars    []string
-	rating   float32
+	Id       int
+	Title    string
+	Year     string
+	Time     int
+	Country  string
+	Plot     string
+	Rating   string
+	Path     string
+	Director []string
+	Writers  []string
+	Stars    []string
 }

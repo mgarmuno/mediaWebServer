@@ -1,0 +1,148 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.add-movie-butt {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 280px;
+}
+
+.movie-search-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  max-width: 60%;
+  max-height: 40%;
+  transform: translate(-50%, -50%);
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+.movie-cards-popup {
+  display: none;
+  position: fixed;
+  overflow: auto;
+  top: 12%;
+  left: 20%;
+  max-width: 40%;
+  max-height: 80%;
+  padding: 1em;
+  /* transform: translate(50%, -25%); */
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+.movie-cards-popup .movie-card:hover {
+  background-color: #555;
+}
+
+.movie-search-form {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+.movie-search-form input[type=text], .movie-search-form input[type=number] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+.movie-search-form input[type=text]:focus, .movie-search-form input[type=number]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+.movie-search-form .btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.movie-search-form .close {
+  background-color: red;
+}
+
+.movie-search-form .btn:hover, .add-movie-butt:hover {
+  opacity: 1;
+}
+
+.title {
+  text-align: center;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.float-left {
+  float: left;
+}
+
+.movie-card {
+  display: table;
+  margin: 1em;
+}
+
+.title-year {
+  margin: 50;
+  float: right;
+  text-align: center;
+  top: 50%;
+}
+
+.title-year a {
+  margin: 10%;
+}
+
+.active {
+  background-color: #4CAF50;
+}
+
+img {
+  display: block;
+  max-width: 500px;
+  max-height: 250px;
+  width: auto;
+  height: auto;
+}

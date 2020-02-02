@@ -16,19 +16,19 @@ const (
 	dbName                = "./mediaWebServerDatabase.db"
 	driver                = "sqlite3"
 	create                = "CREATE TABLE IF NOT EXISTS"
-	colom                 = ":"
+	colon                 = ":"
 	sp                    = " "
 	interrogation         = "?"
 	comma                 = ","
 	parBeg                = "("
 	parEnd                = ")"
 	movie                 = "movie"
-	serie                 = "serie"
+	series                = "series"
 	user                  = "user"
 	season                = "season"
 	actor                 = "actor"
 	director              = "director"
-	moviCast              = "movie_cast"
+	movieCast             = "movie_cast"
 	movieDirCast          = "movie_dir_cast"
 	genre                 = "genre"
 	movieGenres           = "movie_genres"
@@ -42,21 +42,28 @@ const (
 	moviesDirectoryFields = "(id integer primary key, directory text)"
 )
 
-type DatabaseAPI struct{}
+type DatabaseAPI struct {
+}
 
-func OpenConnection() {
+func CheckDatabase() {
 	var databaseCreated bool = true
 	if _, err := os.Stat(dbName); os.IsNotExist(err) {
 		fmt.Println("The database does not exists, creating...")
 		databaseCreated = false
 	}
+	if !databaseCreated {
+		database := OpenConnection()
+		createDatabaseStructure(&database)
+		database.Close()
+	}
+}
+
+func OpenConnection() sql.DB {
 	database, err := sql.Open(driver, dbName)
 	if err != nil {
 		log.Fatal("Error opening database:", err)
 	}
-	if !databaseCreated {
-		createStructure(database)
-	}
+	return *database
 }
 
 func getAppDirectory() string {
@@ -67,25 +74,26 @@ func getAppDirectory() string {
 	return actualDir
 }
 
-func createStructure(database *sql.DB) {
+func createDatabaseStructure(database *sql.DB) {
 	fmt.Println("Creating database structure...")
 	createTable(database, movie, getObjectFields(&items.Movie{}))
-	createTable(database, serie, getObjectFields(&items.Serie{}))
+	createTable(database, series, getObjectFields(&items.Series{}))
 	createTable(database, user, getObjectFields(&items.User{}))
 	createTable(database, season, getObjectFields(&items.Season{}))
 	createTable(database, actor, getObjectFields(&items.Actor{}))
 	createTable(database, director, getObjectFields(&items.Director{}))
 	createTable(database, genre, getObjectFields(&items.Genre{}))
-	createTable(database, moviCast, movieCastFields)
+	createTable(database, movieCast, movieCastFields)
 	createTable(database, movieDirCast, movieDirCastFields)
 	createTable(database, movieGenres, movieGenresFields)
 	createTable(database, moviesDirectory, moviesDirectoryFields)
+	database.Close()
 }
 
 func createTable(database *sql.DB, table string, fields string) {
 	_, err := database.Exec(create + sp + table + fields)
 	if err != nil {
-		log.Fatal("Error creating table", table, colom, err)
+		log.Fatal("Error creating table", table, colon, err)
 	}
 	fmt.Println("Table", table, "created")
 }
@@ -94,7 +102,7 @@ func getObjectFields(fields interface{}) string {
 	var fieldsSlice []string
 	val := reflect.ValueOf(fields).Elem()
 	for i := 0; i < val.NumField(); i++ {
-		var datatype string = getDatatypeForSqlite(val.Type().Field(i).Type.String())
+		var datatype string = getDatatypeForSQLite(val.Type().Field(i).Type.String())
 		if datatype == sp {
 			continue
 		}
@@ -108,7 +116,7 @@ func getObjectFields(fields interface{}) string {
 	return parBeg + strings.Join(fieldsSlice, comma) + parEnd
 }
 
-func getDatatypeForSqlite(goDatatype string) string {
+func getDatatypeForSQLite(goDatatype string) string {
 	switch goDatatype {
 	case "int":
 		return integerString

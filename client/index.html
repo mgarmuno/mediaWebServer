@@ -1,20 +1,40 @@
 <html>
     <head>
         <meta charset="utf-8" />
+        <link rel="stylesheet" href="/css/main.css"/>
+        <script src="js/main.js"></script>
+        <script src="js/ombdApi.js"></script>
+        <script src="js/jquery.js"></script>
+        <script src="js/movie.js"></script>
         <title>Web Filmography</title> 
     </head>
     <body>
         <div>
-            <h3 class="title">Web Filmograpgy</h3>
+            <h3 class="title">Web Filmography</h3>
         </div>
         <div>
             <p>
-                <li>
-                    <ul>Movies</ul>
-                    <ul>Series</ul>
-                    <ul>Documentaries</ul>
-                </li>
+                <ul class="main-menu">
+                    <li class="main-menu-list"><a class="active" href="#movies">Movies</a></li>
+                    <li class="main-menu-list"><a href="#series">Series</a></li class="main-menu-list">
+                    <li class="main-menu-list"><a href="#documentaries">Documentaries</a></li class="main-menu-list">
+                </ul>
             </p>
+        </div>
+        <div id="moviesSearchResultPopup" class="movie-cards-popup"></div>
+        <button class="add-movie-butt" onclick="openMovieSearchForm()">Add New Movie</button>
+        <div id="movieSearchDiv" class="movie-search-popup">
+            <form id="movieSearchForm" class="movie-search-form">
+                <h1>Search</h1>
+                <label for="title"><b>Name</b></label>
+                <input type="text" placeholder="Enter movie title" name="title" required>
+                
+                <label for="year"><b>Year</b></label>
+                <input type="number" placeholder="Release year" name="year">
+                
+                <button class="btn" onclick="searchMovieByTitle(event)">Search</button>
+                <button type="button" class="btn close" onClick="closeMovieSearchForm()">Close</button>
+            </form>
         </div>
     </body>
 </html>

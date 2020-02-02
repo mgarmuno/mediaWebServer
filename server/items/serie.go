@@ -1,6 +1,6 @@
 package items
 
-type Serie struct {
+type Series struct {
 	id      int
 	number  int
 	title   string
