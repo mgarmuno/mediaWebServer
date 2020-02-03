@@ -1,11 +1,19 @@
+function onDocumentReady() {
+    $('#addMovieButton').on('click', triggerOpenDialog)
+}
+
 function openMovieSearchForm() {
-    document.getElementById("movieSearchDiv").style.display = "block";
+    $("#movieSearchDiv").style.display = "block";
 }
 
 function closeMovieSearchForm() {
-    document.getElementById("movieSearchDiv").style.display = "none";
+    $("#movieSearchDiv").style.display = "none";
 }
 
 function openMovieCardsDiv() {
-    document.getElementById("moviesSearchResultPopup").style.display = "block";
+    $("#moviesSearchResultPopup").style.display = "block";
+}
+
+function triggerOpenDialog() {
+    $('#fileInput').trigger('click');
 }

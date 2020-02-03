@@ -7,13 +7,12 @@ import (
 	"sync"
 )
 
-type OmdbAPI struct{}
-type Omdb struct {
-	Title string `json:"title,omitempty"`
-	Year  string `json:"year,omitempty"`
-}
+const (
+	apiKey string = "daee70b3"
+)
 
-var db = []*Omdb{}
+type OmdbAPI struct{}
+
 var lock sync.Mutex
 
 func (omdb *OmdbAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +23,7 @@ func (omdb *OmdbAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		doPost(w, r)
 	default:
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "Unsuported method '%v' to %v\n", r.Method, r.URL)
-		log.Printf("Unsuported method '%v' to %v\n", r.Method, r.URL)
+		fmt.Fprintf(w, "Unsupported method '%v' to %v\n", r.Method, r.URL)
+		log.Printf("Unsupported method '%v' to %v\n", r.Method, r.URL)
 	}
 }

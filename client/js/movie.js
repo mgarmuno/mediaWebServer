@@ -9,7 +9,7 @@ const Item = ({ Title, Year, Poster}) => `
     </div>
 </div>`
 
-function presentMoviesPopup(movies) {
+function showMoviesPopup(movies) {
     var divMovies = $('#moviesSearchResultPopup');
     divMovies.html(movies.Search.map(Item).join(''));
     closeMovieSearchForm();

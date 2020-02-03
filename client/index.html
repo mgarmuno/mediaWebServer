@@ -6,6 +6,7 @@
         <script src="js/ombdApi.js"></script>
         <script src="js/jquery.js"></script>
         <script src="js/movie.js"></script>
+        <script>$(document).ready(onDocumentReady);</script>
         <title>Web Filmography</title> 
     </head>
     <body>
@@ -22,7 +23,9 @@
             </p>
         </div>
         <div id="moviesSearchResultPopup" class="movie-cards-popup"></div>
-        <button class="add-movie-butt" onclick="openMovieSearchForm()">Add New Movie</button>
+        <button id="addMovieButton" class="add-movie-butt">Add New Movie</button>
+        <input id="fileInput" type="file" name="uploadFile" style="display: none;" onchange="uploadMovies(event, this.files)"
+            accept=".webm, .mpg, .mp2, .mpeg, .mpe, mpv, .ogg, .mp4, .m4p, .m4v, .avi, .wmv, .mkv, .mov, .qt, .flv, .swf"/>
         <div id="movieSearchDiv" class="movie-search-popup">
             <form id="movieSearchForm" class="movie-search-form">
                 <h1>Search</h1>

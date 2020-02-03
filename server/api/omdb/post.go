@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	url    = "https://www.omdbapi.com/?"
-	apiKey = "daee70b3"
+	url = "https://www.omdbapi.com/?"
 )
 
 func doPost(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +54,7 @@ func prepareRequestQueryByMovie(movie items.Movie) *http.Request {
 
 	req.Header.Set("Content-Type", "application/json;charset=utf-8")
 	q := req.URL.Query()
-	q.Add("apikey", "daee70b3")
+	q.Add("apikey", apiKey)
 	q.Add("s", movie.Title)
 	if movie.Year != "" {
 		q.Add("y", movie.Year)
