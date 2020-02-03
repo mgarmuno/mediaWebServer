@@ -23,7 +23,10 @@
             </p>
         </div>
         <div id="moviesSearchResultPopup" class="movie-cards-popup"></div>
-        <button id="addMovieButton" class="add-movie-butt">Add New Movie</button>
+        <div id="moviesButtons">
+            <button id="addMovieButton" class="movie-button add">Add New Movie</button>
+            <button id="searchMovieButton" class="movie-button search" onclick="openMovieSearchForm()">Search Movie</button>
+        </div>
         <input id="fileInput" type="file" name="uploadFile" style="display: none;" onchange="uploadMovies(event, this.files)"
             accept=".webm, .mpg, .mp2, .mpeg, .mpe, mpv, .ogg, .mp4, .m4p, .m4v, .avi, .wmv, .mkv, .mov, .qt, .flv, .swf"/>
         <div id="movieSearchDiv" class="movie-search-popup">

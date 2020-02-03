@@ -10,8 +10,12 @@ const Item = ({ Title, Year, Poster}) => `
 </div>`
 
 function showMoviesPopup(movies) {
-    var divMovies = $('#moviesSearchResultPopup');
-    divMovies.html(movies.Search.map(Item).join(''));
-    closeMovieSearchForm();
-    openMovieCardsDiv();
+    if (movies.Response === "True") {
+        var divMovies = $('#moviesSearchResultPopup');
+        divMovies.html(movies.Search.map(Item).join(''));
+        closeMovieSearchForm();
+        openMovieCardsDiv();
+    } else {
+        console.log(movie.Error)
+    }
 }

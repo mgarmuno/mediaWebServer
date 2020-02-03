@@ -6,7 +6,7 @@ body {
   box-sizing: border-box;
 }
 
-.add-movie-butt {
+.movie-button {
   background-color: #555;
   color: white;
   padding: 16px 20px;
@@ -15,8 +15,15 @@ body {
   opacity: 0.8;
   position: fixed;
   bottom: 23px;
-  right: 28px;
   width: 280px;
+}
+
+.movie-button.add {
+  right: 2%;
+}
+
+.movie-button.search {
+  right: 20%;
 }
 
 .movie-search-popup {

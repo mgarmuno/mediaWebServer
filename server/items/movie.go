@@ -9,6 +9,9 @@ type Movie struct {
 	Plot     string
 	Rating   string
 	Path     string
+	Poster   string
+	ImdbID   string
+	Type     string
 	Director []string
 	Writers  []string
 	Stars    []string

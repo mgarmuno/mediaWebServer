@@ -3,15 +3,15 @@ function onDocumentReady() {
 }
 
 function openMovieSearchForm() {
-    $("#movieSearchDiv").style.display = "block";
+    $("#movieSearchDiv").first().show();
 }
 
 function closeMovieSearchForm() {
-    $("#movieSearchDiv").style.display = "none";
+    $("#movieSearchDiv").first().hide();
 }
 
 function openMovieCardsDiv() {
-    $("#moviesSearchResultPopup").style.display = "block";
+    $("#moviesSearchResultPopup").first().show();
 }
 
 function triggerOpenDialog() {
