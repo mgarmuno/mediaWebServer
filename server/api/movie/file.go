@@ -1,4 +1,4 @@
-package movie
+package file
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 	"sync"
 )
 
-type MovieAPI struct{}
+type FileUploadAPI struct{}
 
 var lock sync.Mutex
 
-func (m MovieAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (f FileUploadAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 
 	switch r.Method {

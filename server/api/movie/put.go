@@ -1,4 +1,4 @@
-package movie
+package file
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-type MovieResponse struct {
+type FileUploadResponse struct {
 	Saved    bool
 	Filename string
 }
@@ -51,7 +51,7 @@ func doPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func getMovieSavesResponse(filename string) ([]byte, error) {
-	movieResponse := &MovieResponse{Saved: true, Filename: filename}
-	data, err := json.Marshal(movieResponse)
+	uploadResponse := &FileUploadResponse{Saved: true, Filename: filename}
+	data, err := json.Marshal(uploadResponse)
 	return data, err
 }
