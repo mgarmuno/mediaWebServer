@@ -43,6 +43,6 @@ function uploadMovies(e, movies) {
     var formData = new FormData();
     formData.append('file', movies[0]);
 
-    xhttp.open("POST", '/api/movie/', true);
+    xhttp.open("POST", '/api/file/', true);
     xhttp.send(formData);
 }
