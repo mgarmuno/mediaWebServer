@@ -20,7 +20,7 @@ type OmdbResponse struct {
 	Search       []items.Movie
 }
 
-func doPost(w http.ResponseWriter, r *http.Request) {
+func doGet(w http.ResponseWriter, r *http.Request) {
 	finish, page, totalMovSum, movie, compMovColl := preparePostVariables(r)
 
 	for !finish {

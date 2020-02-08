@@ -19,7 +19,7 @@ function searchMovieByTitle(e) {
         data.year = year;
     }
 
-    xhttp.open("POST", '/api/omdb/', true);
+    xhttp.open("GET", '/api/omdb/', true);
     xhttp.send(JSON.stringify(data));
 }
 
