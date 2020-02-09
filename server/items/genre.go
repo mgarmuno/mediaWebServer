@@ -1,6 +1,6 @@
 package items
 
 type Genre struct {
-	id   int
-	name string
+	Id   int
+	Name string
 }

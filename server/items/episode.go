@@ -1,7 +1,8 @@
 package items
 
 type Episode struct {
-	id      int
-	Session int
-	Number  int
+	Id       int
+	Session  int
+	Number   int
+	FilePath string
 }

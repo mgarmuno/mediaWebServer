@@ -3,6 +3,7 @@ package omdb
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,6 +20,23 @@ type OmdbResponse struct {
 	Response     string
 	Search       []items.Movie
 	IsByID       bool
+}
+
+func GetDecodedResponseBody(res *http.Response) OmdbResponse {
+	decoder := json.NewDecoder(res.Body)
+	var movies OmdbResponse
+	err := decoder.Decode(&movies)
+	if err != nil {
+		log.Println("Error decoding response:", err)
+	}
+	return movies
+}
+
+func DecodeOmdbResponse(res *http.Response) OmdbResponse {
+	decoder, _ := ioutil.ReadAll(res.Body)
+	var omdbResponse OmdbResponse
+	json.Unmarshal([]byte(decoder), &omdbResponse)
+	return omdbResponse
 }
 
 func doGet(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +91,7 @@ func prepareSuccessResponse(w http.ResponseWriter, compMovColl []items.Movie, is
 	fmt.Println("Total movies getted from OMDB", len(compMovColl))
 	w.WriteHeader(200)
 	w.Header().Set("Content-Type", "application/json")
-	moviesResponse := &OmdbResponse{
+	moviesResponse := OmdbResponse{
 		Response:     "True",
 		TotalResults: strconv.Itoa(len(compMovColl)),
 		Search:       compMovColl,
@@ -108,16 +126,6 @@ func getDecodedResponseBodyByID(res *http.Response) OmdbResponse {
 	return movies
 }
 
-func GetDecodedResponseBody(res *http.Response) OmdbResponse {
-	decoder := json.NewDecoder(res.Body)
-	var movies OmdbResponse
-	err := decoder.Decode(&movies)
-	if err != nil {
-		log.Println("Error decoding response:", err)
-	}
-	return movies
-}
-
 func getMovieInfoFromRequest(r *http.Request) items.Movie {
 	var title string = r.URL.Query().Get("title")
 	var year string = r.URL.Query().Get("year")
@@ -144,6 +152,7 @@ func setQueryParameters(req *http.Request, movie *items.Movie, page *int) bool {
 	var isByID bool = false
 	q := req.URL.Query()
 	q.Add("apikey", apiKey)
+	fmt.Println("setQueryParameters", movie.ImdbID)
 	if movie.ImdbID != "" {
 		q.Add("i", movie.ImdbID)
 		q.Add("plot", "full")
