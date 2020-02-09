@@ -1,7 +1,7 @@
 package items
 
-type Season struct {
+type Episode struct {
 	id      int
-	MovieId int
+	Session int
 	Number  int
 }

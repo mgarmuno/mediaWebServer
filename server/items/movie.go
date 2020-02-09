@@ -12,7 +12,5 @@ type Movie struct {
 	Poster   string
 	ImdbID   string
 	Type     string
-	Director []string
-	Writers  []string
-	Stars    []string
+	Filepath string
 }

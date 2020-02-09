@@ -11,7 +11,6 @@ function searchMovieByTitle(e) {
     };
 
     var title = document.forms['movieSearchForm']['title'].value
-    var page = 100;
     var year = document.forms['movieSearchForm']['year'].value;
 
     var data = {title: title};

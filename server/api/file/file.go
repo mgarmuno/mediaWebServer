@@ -13,7 +13,6 @@ var lock sync.Mutex
 
 func (f FileUploadAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-
 	switch r.Method {
 	case http.MethodPost:
 		doPost(w, r)

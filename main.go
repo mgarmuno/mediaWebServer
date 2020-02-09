@@ -15,7 +15,7 @@ func main() {
 	fs := http.FileServer(http.Dir("client"))
 	http.Handle("/", fs)
 	http.Handle("/api/omdb/", &omdb.OmdbAPI{})
-	http.Handle("/api/movie/", &file.FileUploadAPI{})
+	http.Handle("/api/file/", &file.FileUploadAPI{})
 
 	fmt.Println("Serving...")
 	http.ListenAndServe(":8080", nil)
