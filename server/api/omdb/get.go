@@ -9,15 +9,18 @@ import (
 	"strconv"
 
 	"github.com/mgarmuno/mediaWebServer/server/items"
+	"github.com/mgarmuno/mediaWebServer/server/utils"
 )
 
 const (
-	url = "https://www.omdbapi.com/?"
+	url      = "https://www.omdbapi.com/?"
+	notFound = "Movie not found!"
 )
 
 type OmdbResponse struct {
 	TotalResults string
 	Response     string
+	Error        string
 	Search       []items.Movie
 	IsByID       bool
 }
@@ -40,31 +43,40 @@ func DecodeOmdbResponse(res *http.Response) OmdbResponse {
 }
 
 func doGet(w http.ResponseWriter, r *http.Request) {
-	finish, page, totalMovSum, movie, compMovColl, isByID := preparePostVariables(r)
-	fmt.Println("Searching movie:", movie)
-	for !finish && !isByID {
-		compMovColl, isByID = doPostEncapsulated(&movie, &page, compMovColl, &totalMovSum, &finish)
-		if compMovColl == nil {
+	finish, page, totalMovSum, movie, compMovColl, isByID, titleForSearch := preparePostVariables(r)
+	var tries int = 30
+	for !finish && tries > 0 {
+		fmt.Println("Try number:", tries, "searching for", titleForSearch)
+		compMovColl, isByID = doPostEncapsulated(&movie, &page, compMovColl, &totalMovSum, &finish, titleForSearch)
+		if titleForSearch == "" {
 			finish = true
 			setFailResponse(w, nil)
 			return
+		} else if len(compMovColl) == 0 {
+			titleForSearch = utils.RemoveLastWord(titleForSearch)
+			if titleForSearch == "" {
+				break
+			}
 		}
+		if finish {
+			break
+		}
+		tries--
 	}
 	prepareSuccessResponse(w, compMovColl, isByID)
 }
 
-func preparePostVariables(r *http.Request) (bool, int, int, items.Movie, []items.Movie, bool) {
+func preparePostVariables(r *http.Request) (bool, int, int, items.Movie, []items.Movie, bool, string) {
 	var finish bool = false
 	var page int = 1
 	var totalMovSum int = 0
 	movie := getMovieInfoFromRequest(r)
-	var compMovColl []items.Movie
-	return finish, page, totalMovSum, movie, compMovColl, false
+	var compMovColl []items.Movie = []items.Movie{}
+	return finish, page, totalMovSum, movie, compMovColl, false, movie.Title
 }
 
-func doPostEncapsulated(movie *items.Movie, page *int, completeMoviesResponded []items.Movie, totalMoviesGetted *int, finished *bool) ([]items.Movie, bool) {
-	req, isByID := getRequestQueryByMovie(movie, page)
-	*page++
+func doPostEncapsulated(movie *items.Movie, page *int, completeMoviesResponded []items.Movie, totalMoviesGetted *int, finished *bool, titleForSearch string) ([]items.Movie, bool) {
+	req, isByID := getRequestQueryByMovie(movie, page, titleForSearch)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -77,18 +89,21 @@ func doPostEncapsulated(movie *items.Movie, page *int, completeMoviesResponded [
 	} else {
 		movies = GetDecodedResponseBody(resp)
 	}
+	if movies.Error == notFound {
+		return completeMoviesResponded, isByID
+	}
 	completeMoviesResponded = append(completeMoviesResponded, movies.Search...)
 	*totalMoviesGetted = *totalMoviesGetted + len(movies.Search)
 	moviesInResponse, err := strconv.Atoi(movies.TotalResults)
-	if err != nil || moviesInResponse <= *totalMoviesGetted {
+	if err != nil || moviesInResponse <= *totalMoviesGetted || isByID {
 		*finished = true
 		log.Println("Loop finished")
 	}
+	*page++
 	return completeMoviesResponded, isByID
 }
 
 func prepareSuccessResponse(w http.ResponseWriter, compMovColl []items.Movie, isByID bool) {
-	fmt.Println("Total movies getted from OMDB", len(compMovColl))
 	w.WriteHeader(200)
 	w.Header().Set("Content-Type", "application/json")
 	moviesResponse := OmdbResponse{
@@ -134,32 +149,32 @@ func getMovieInfoFromRequest(r *http.Request) items.Movie {
 		Title:  title,
 		Year:   year,
 		ImdbID: imdbID}
+	fmt.Println(movie)
 	return movie
 }
 
-func getRequestQueryByMovie(movie *items.Movie, page *int) (*http.Request, bool) {
+func getRequestQueryByMovie(movie *items.Movie, page *int, titleForSearch string) (*http.Request, bool) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Println("Error perparing OMDB request:", err)
 		return req, false
 	}
 	req.Header.Set("Content-Type", "application/json;charset=utf-8")
-	var isByID bool = setQueryParameters(req, movie, page)
+	var isByID bool = setQueryParameters(req, movie, page, titleForSearch)
 	return req, isByID
 }
 
-func setQueryParameters(req *http.Request, movie *items.Movie, page *int) bool {
+func setQueryParameters(req *http.Request, movie *items.Movie, page *int, titleForSearch string) bool {
 	var isByID bool = false
 	q := req.URL.Query()
 	q.Add("apikey", apiKey)
-	fmt.Println("setQueryParameters", movie.ImdbID)
 	if movie.ImdbID != "" {
 		q.Add("i", movie.ImdbID)
 		q.Add("plot", "full")
 		isByID = true
 	} else {
 		if movie.Title != "" {
-			q.Add("s", movie.Title)
+			q.Add("s", titleForSearch)
 		}
 		if movie.Year != "" {
 			q.Add("y", movie.Year)

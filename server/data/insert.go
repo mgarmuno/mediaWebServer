@@ -20,7 +20,7 @@ func InsertMovie(movie items.Movie, filepath, session, episode string) {
 
 func insertMovie(movie items.Movie) {
 	database := OpenConnection()
-	values := getMovieFieldsValue(movie)
+	values := getMovieFieldValues(movie)
 	var query string = insertQuery + blankSapace + movieTable + parBeg + movieFieldsTitle + parEnd + valuesQuery + parBeg + values + parEnd
 	_, err := database.Exec(query)
 	if err != nil {
@@ -30,7 +30,7 @@ func insertMovie(movie items.Movie) {
 	database.Close()
 }
 
-func getMovieFieldsValue(movie items.Movie) string {
+func getMovieFieldValues(movie items.Movie) string {
 	values := []string{
 		strings.ReplaceAll(movie.Title, "'", "''"),
 		movie.Year,

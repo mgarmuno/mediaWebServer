@@ -9,7 +9,8 @@ const Item = ({ Title, Year, Poster}) => `
     </div>
 </div>`
 
-function showMoviesPopup(movies) {
+function showMoviesPopup(data) {
+    var movies = JSON.parse(data);
     if (movies.Response === "True") {
         var divMovies = $('#moviesSearchResultPopup');
         divMovies.html(movies.Search.map(Item).join(''));

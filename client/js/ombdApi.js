@@ -1,25 +1,12 @@
 function searchMovieByTitle(e) {
     e.preventDefault();
-
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var movies = getMovies(this.responseText);
-            showMoviesPopup(movies);
-        }
-    };
-
     var title = document.forms['movieSearchForm']['title'].value
-    var year = document.forms['movieSearchForm']['year'].value;
-
-    var data = {title: title};
-    if (year) {
-        data.year = year;
-    }
-
-    xhttp.open("GET", '/api/omdb/', true);
-    xhttp.send(JSON.stringify(data));
+    $.ajax({
+        url: 'http://localhost:8080/api/omdb/',
+        data: {title: title},
+        typeData: 'application/json',
+        success: showMoviesPopup
+    })
 }
 
 function getMovies(json) {

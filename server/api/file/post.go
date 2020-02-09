@@ -85,7 +85,6 @@ func getMovieSavesResponse(filename string) []byte {
 }
 
 func getCandidateMovies(movieName string) omdb.OmdbResponse {
-	fmt.Println("Searching for movie:", movieName)
 	req := getRequestQuery(movieName, "")
 	client := &http.Client{}
 	response, err := client.Do(req)
@@ -118,7 +117,7 @@ func checkResponse(w *http.ResponseWriter, movies omdb.OmdbResponse, filename, s
 		if movies.TotalResults == "1" {
 			uploadMovies(movies.Search[0], filename, session, episode)
 		} else {
-			// TODO not by ID
+			fmt.Println("checkResponse", movies)
 		}
 	} else {
 		// TODO fail in the response

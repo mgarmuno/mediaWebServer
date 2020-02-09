@@ -16,7 +16,7 @@ const (
 func GetMovieNameSessionEpisodeByFileName(fileName string) (string, string, string) {
 	var ext string = filepath.Ext(fileName)
 	fileName = fileName[0 : len(fileName)-len(ext)]
-	fileName = strings.ReplaceAll(fileName, "_", " ")
+	fileName = cleanCommonSeparators(fileName)
 	re := regexp.MustCompile(sanitizeBrackets)
 	var movieName string = string(re.ReplaceAll([]byte(fileName), []byte("")))
 	re = regexp.MustCompile(sanitizeName)
@@ -25,6 +25,21 @@ func GetMovieNameSessionEpisodeByFileName(fileName string) (string, string, stri
 	movieName, episode := getAndReplaceEpisodeByMovieName(movieName)
 	movieName = replaceSignsForSapacesAndTrim(movieName)
 	return movieName, seasson, episode
+}
+
+func RemoveLastWord(title string) string {
+	splitted := strings.Split(title, " ")
+	if len(splitted) <= 1 {
+		return ""
+	}
+	splitted = splitted[:len(splitted)-1]
+	return strings.Join(splitted, " ")
+}
+
+func cleanCommonSeparators(fileName string) string {
+	fileName = strings.ReplaceAll(fileName, "_", " ")
+	fileName = strings.ReplaceAll(fileName, ".", " ")
+	return fileName
 }
 
 func replaceSignsForSapacesAndTrim(fileName string) string {
