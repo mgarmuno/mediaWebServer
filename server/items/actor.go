@@ -1,7 +1,7 @@
 package items
 
 type Actor struct {
-	Id          int
+	ID          int64
 	Name        string
 	Surname     string
 	Nacionality string

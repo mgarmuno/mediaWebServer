@@ -1,7 +1,7 @@
 package items
 
 type Season struct {
-	Id      int
-	MovieId int
-	Number  int
+	ID      int64
+	MovieID int
+	Number  string
 }

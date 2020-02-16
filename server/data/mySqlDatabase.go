@@ -9,36 +9,54 @@ import (
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/mgarmuno/mediaWebServer/server/items"
 )
 
 const (
-	dbName             = "./mediaWebServerDatabase.db"
-	driver             = "sqlite3"
-	create             = "CREATE TABLE IF NOT EXISTS"
-	colon              = ":"
-	blankSapace        = " "
-	interrogation      = "?"
-	comma              = ","
-	parBeg             = "("
-	parEnd             = ")"
-	movie              = "movie"
-	user               = "user"
-	season             = "season"
-	actor              = "actor"
-	director           = "director"
-	movieCast          = "movie_cast"
-	movieDirCast       = "movie_dir_cast"
-	genre              = "genre"
-	movieGenres        = "movie_genres"
-	episode            = "episode"
-	nullString         = "null"
-	integerString      = "integer"
-	textString         = "text"
-	movieCastFields    = "id integer primary key, id_actor integer, id_movie integer, role text"
-	movieDirCastFields = "id integer primary key, id_director integer, id_movie integer"
-	movieGenresFields  = "id integer primary key, id_genre integer, id_movie integer"
-	moviesDirectory    = "movies_directory"
+	dbName                   = "./mediaWebServerDatabase.db"
+	driver                   = "sqlite3"
+	create                   = "CREATE TABLE IF NOT EXISTS"
+	asterisk                 = "*"
+	colon                    = ":"
+	blankSapace              = " "
+	interrogation            = "?"
+	comma                    = ","
+	parBeg                   = "("
+	parEnd                   = ")"
+	argumentForQuery         = "%d"
+	movieCreateFields        = "id integer primary key, title text, year text, runtime, text, country text, plot text, rating text, poster text, imdbid text, type text, filepath text"
+	userCreateFields         = "id integer primary key, name text, password text"
+	actorCreateFields        = "id integer primary key, name text"
+	directorCreateFields     = "id integer primary key, name text"
+	episodeCreateFields      = "id integer primary key, season_id integer, episode text, filepath text"
+	genreCreateFields        = "id integer primary key, name text"
+	seasonCreateFields       = "id integer primary key, movie_id integer, season text"
+	movieCastCreateFields    = "id integer primary key, id_movie integer, id_actor integer"
+	movieDirCastCreateFields = "id integer primary key, id_movie integer, id_director integer"
+	movieGenresCreateFields  = "id integer primary key, id_movie integer, id_genre integer"
+	movieFields              = "title,year,runtime,country,plot,imdb_rating,poster,imdb_id,type,filepath"
+	seasonFields             = "movie_id,season"
+	movieTableName           = "movie"
+	userTableName            = "user"
+	seasonTableName          = "season"
+	actorTableName           = "actor"
+	directorTableName        = "director"
+	movieCastTableName       = "movie_cast"
+	movieDirCastTableName    = "movie_dir_cast"
+	genreTableName           = "genre"
+	movieGenresTableName     = "movie_genres"
+	episodeTableName         = "episode"
+	nullString               = "null"
+	integerString            = "integer"
+	textString               = "ext"
+	imdbIDFieldName          = "imdb_id"
+	movieIDField             = "movie_id"
+	seasonNumberField        = "season"
+	seasonIDField            = "season_id"
+	episodeNumberField       = "episode"
+	movieCastFields          = "id integer primary key, id_actor integer, id_movie integer, role text"
+	movieDirCastFields       = "id integer primary key, id_director integer, id_movie integer"
+	movieGenresFields        = "id integer primary key, id_genre integer, id_movie integer"
+	moviesDirectory          = "movies_directory"
 )
 
 type DatabaseAPI struct {
@@ -75,22 +93,22 @@ func getAppDirectory() string {
 
 func createDatabaseStructure(database *sql.DB) {
 	fmt.Println("Creating database structure...")
-	createTable(database, movie, getObjectFieldsForCreateTabble(&items.Movie{}))
-	createTable(database, user, getObjectFieldsForCreateTabble(&items.User{}))
-	createTable(database, season, getObjectFieldsForCreateTabble(&items.Season{}))
-	createTable(database, actor, getObjectFieldsForCreateTabble(&items.Actor{}))
-	createTable(database, director, getObjectFieldsForCreateTabble(&items.Director{}))
-	createTable(database, genre, getObjectFieldsForCreateTabble(&items.Genre{}))
-	createTable(database, episode, getObjectFieldsForCreateTabble(&items.Episode{}))
-	createTable(database, movieCast, strings.Split(movieCastFields, comma))
-	createTable(database, movieDirCast, strings.Split(movieDirCastFields, comma))
-	createTable(database, movieGenres, strings.Split(movieGenresFields, comma))
+	createTable(database, movieTableName, movieFields)
+	createTable(database, userTableName, userCreateFields)
+	createTable(database, seasonTableName, seasonCreateFields)
+	createTable(database, actorTableName, actorCreateFields)
+	createTable(database, directorTableName, directorCreateFields)
+	createTable(database, genreTableName, genreCreateFields)
+	createTable(database, episodeTableName, episodeCreateFields)
+	createTable(database, movieCastTableName, movieCastCreateFields)
+	createTable(database, movieDirCastTableName, movieDirCastCreateFields)
+	createTable(database, movieGenresTableName, movieGenresCreateFields)
 	fmt.Println("Database created, closing...")
 	database.Close()
 }
 
-func createTable(database *sql.DB, table string, fields []string) {
-	_, err := database.Exec(create + blankSapace + table + parBeg + strings.Join(fields[:], comma) + parEnd)
+func createTable(database *sql.DB, table string, fields string) {
+	_, err := database.Exec(create + blankSapace + table + parBeg + fields + parEnd)
 	if err != nil {
 		log.Fatal("Error creating table", table, colon, err)
 	}
