@@ -19,7 +19,7 @@ const (
 
 type OmdbResponse struct {
 	TotalResults string
-	Response     string
+	Response     bool
 	Error        string
 	Search       []items.Movie
 	IsByID       bool
@@ -46,7 +46,6 @@ func doGet(w http.ResponseWriter, r *http.Request) {
 	finish, page, totalMovSum, movie, compMovColl, isByID, titleForSearch := preparePostVariables(r)
 	var tries int = 30
 	for !finish && tries > 0 {
-		fmt.Println("Try number:", tries, "searching for", titleForSearch)
 		compMovColl, isByID = doPostEncapsulated(&movie, &page, compMovColl, &totalMovSum, &finish, titleForSearch)
 		if titleForSearch == "" {
 			finish = true
@@ -107,7 +106,7 @@ func prepareSuccessResponse(w http.ResponseWriter, compMovColl []items.Movie, is
 	w.WriteHeader(200)
 	w.Header().Set("Content-Type", "application/json")
 	moviesResponse := OmdbResponse{
-		Response:     "True",
+		Response:     true,
 		TotalResults: strconv.Itoa(len(compMovColl)),
 		Search:       compMovColl,
 		IsByID:       isByID}
@@ -120,9 +119,9 @@ func prepareSuccessResponse(w http.ResponseWriter, compMovColl []items.Movie, is
 }
 
 func setFailResponse(w http.ResponseWriter, err error) {
-	fmt.Println("Something went wrong getting the movies search:", err)
+	log.Println("Something went wrong getting the movies search:", err)
 	w.WriteHeader(200)
-	data, _ := json.Marshal(&OmdbResponse{Response: "False", TotalResults: "0", Search: nil})
+	data, _ := json.Marshal(&OmdbResponse{Response: false, TotalResults: "0", Search: nil})
 	fmt.Fprint(w, string(data))
 }
 
@@ -134,7 +133,7 @@ func getDecodedResponseBodyByID(res *http.Response) OmdbResponse {
 		log.Println("Error decoding response ByID:", err)
 	}
 	movies := OmdbResponse{
-		Response:     "True",
+		Response:     true,
 		TotalResults: "1",
 		Search:       []items.Movie{movie},
 		IsByID:       true}
@@ -149,7 +148,6 @@ func getMovieInfoFromRequest(r *http.Request) items.Movie {
 		Title:  title,
 		Year:   year,
 		ImdbID: imdbID}
-	fmt.Println(movie)
 	return movie
 }
 

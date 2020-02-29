@@ -1,3 +1,9 @@
+const MovieInfo = ({Filename, Episode, Session}) => `
+<form class="movie-info-form">
+    <input for="Filename" value="${Filename}" />
+    <input for="Episode" value="${Episode}" />
+    <input for="Session" value="${Session}" />
+</form>`
 const Item = ({ Title, Year, Poster}) => `
 <div class="movie-card">
     <div class="card-poster">
@@ -8,15 +14,26 @@ const Item = ({ Title, Year, Poster}) => `
         </div>
     </div>
 </div>`
+const MovieSearchResultPopupID = '#movieSearchReslutPopup';
+const MovieOptionsPopupID = '#movieOptionsPopup';
 
 function showMoviesPopup(data) {
     var movies = JSON.parse(data);
-    if (movies.Response === "True") {
-        var divMovies = $('#moviesSearchResultPopup');
+    if (movies.Response === true) {
+        var divMovies = $(MovieSearchResultPopupID);
         divMovies.html(movies.Search.map(Item).join(''));
-        closeMovieSearchForm();
-        openMovieCardsDiv();
+        openPopup(MovieSearchResultPopupID);
     } else {
-        console.log(movie.Error)
+        console.log(movie.Error);
+    }
+}
+
+function showOptions(responseJSONString) {
+    var response = JSON.parse(responseJSONString);
+    if (response.Options && response.Options.Search.length > 0) {
+        var divMoviesOptions = $(MovieOptionsPopupID);
+        divMoviesOptions.html(response);
+        divMoviesOptions.append(response.Options.map(Item).join(''));
+        openpopup(MovieOptionsPopupID);
     }
 }

@@ -2,12 +2,22 @@ function onDocumentReady() {
     $('#addMovieButton').on('click', triggerOpenDialog)
 }
 
+function openPopup(popup) {
+    closeAllPopups();
+    $(popup).show();
+}
+
+function closeAllPopups() {
+    $("#movieSearchDiv").hide();
+    $('#movieSearchResultPopup').hide();
+    $('#movieOptionsPopup').hide();
+}
+
 function openMovieSearchForm() {
     $("#movieSearchDiv").first().show();
 }
 
 function closeMovieSearchForm() {
-    $("#movieSearchDiv").first().hide();
 }
 
 function openMovieCardsDiv() {

@@ -132,10 +132,6 @@ func getObjectFields(fields interface{}, isForCreate bool) []string {
 	return fieldsSlice
 }
 
-func getObjectValues(fields interface{}) {
-
-}
-
 func addDataTypeToField(val reflect.Value, name string, i int) string {
 	var datatype string = getDatatypeForSQLite(val.Type().Field(i).Type.String())
 	if datatype == blankSapace {

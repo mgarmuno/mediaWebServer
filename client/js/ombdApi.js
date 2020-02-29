@@ -23,7 +23,7 @@ function uploadMovies(e, movies) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            console.log(this.responseText)
+            checkUploadMovieResponse(this.responseText);
         }
     };
 
@@ -32,4 +32,16 @@ function uploadMovies(e, movies) {
 
     xhttp.open("POST", '/api/file/', true);
     xhttp.send(formData);
+}
+
+function checkUploadMovieResponse(response) {
+    if (response.Saved) {
+        showMovieSaved();
+    } else {
+        if (response.Error) {
+
+        } else {
+            showOptions(response);
+        }
+    }
 }

@@ -30,6 +30,14 @@ type FileUploadResponse struct {
 	Filename string
 }
 
+type SeveralOptionsResponse struct {
+	Saved    bool
+	Filename string
+	Options  omdb.OmdbResponse
+	Episode  string
+	Session  string
+}
+
 func doPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "multipart/form-data")
 	file, handler, err := r.FormFile("file")
@@ -46,7 +54,7 @@ func doPost(w http.ResponseWriter, r *http.Request) {
 	movieName, session, episode := utils.GetMovieNameSessionEpisodeByFileName(handler.Filename)
 	movies := getCandidateMovies(movieName)
 	checkResponse(&w, movies, handler.Filename, session, episode)
-	respondFileSaved(w, handler)
+	// respondFileSaved(w, handler)
 }
 
 func writeFileOnDisk(handler *multipart.FileHeader, file multipart.File) error {
@@ -68,7 +76,7 @@ func writeFileOnDisk(handler *multipart.FileHeader, file multipart.File) error {
 }
 
 func respondFileSaved(w http.ResponseWriter, handler *multipart.FileHeader) {
-	fmt.Println("File saved:", handler.Filename)
+	log.Println("File saved:", handler.Filename)
 	w.WriteHeader(200)
 	data := getMovieSavesResponse(handler.Filename)
 	w.Header().Set("Content-Type", "application/json")
@@ -113,10 +121,11 @@ func getRequestQuery(movieName, imdbID string) *http.Request {
 }
 
 func checkResponse(w *http.ResponseWriter, movies omdb.OmdbResponse, filename, session, episode string) {
-	if movies.Response == "True" {
+	if movies.Response == true {
 		if movies.TotalResults == "1" {
-			uploadMovies(movies.Search[0], filename, session, episode)
+			uploadMovie(movies.Search[0], filename, session, episode)
 		} else {
+			respondSeveralMoviesOptions(*w, movies, filename, session, episode)
 			fmt.Println("checkResponse", movies)
 		}
 	} else {
@@ -124,7 +133,7 @@ func checkResponse(w *http.ResponseWriter, movies omdb.OmdbResponse, filename, s
 	}
 }
 
-func uploadMovies(movie items.Movie, filename, session, episode string) {
+func uploadMovie(movie items.Movie, filename, session, episode string) {
 	req := getRequestQuery("", movie.ImdbID)
 	client := &http.Client{}
 	response, err := client.Do(req)
@@ -135,7 +144,23 @@ func uploadMovies(movie items.Movie, filename, session, episode string) {
 	omdbResponse := omdb.DecodeOmdbResponse(response)
 	finalFilePath := getFinalPathForFile(&movie, session, episode)
 	data.InsertMovie(omdbResponse.Search[0], finalFilePath, session, episode)
-	// writeFinalFileOnDisk(filename, finalFilePath)
+	writeFinalFileOnDisk(filename, finalFilePath)
+}
+
+func respondSeveralMoviesOptions(w http.ResponseWriter, movies omdb.OmdbResponse, filename, session, episode string) {
+	w.WriteHeader(200)
+	data := getSeveralMoviesOptionsJSON(movies, filename, session, episode)
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(data))
+}
+
+func getSeveralMoviesOptionsJSON(movies omdb.OmdbResponse, filename, session, episode string) []byte {
+	uploadResponse := &SeveralOptionsResponse{Saved: false, Options: movies, Filename: filename, Session: session, Episode: episode}
+	data, err := json.Marshal(uploadResponse)
+	if err != nil {
+		log.Println("Error parsing movie response to JSON:", err)
+	}
+	return data
 }
 
 func getFinalPathForFile(movie *items.Movie, session, episode string) string {
